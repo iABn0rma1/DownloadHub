@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DownloadHub</title>
+    <link rel="apple-touch-icon" sizes="192x192" href="../static/favicon_io/android-chrome-192x192.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="../static/assets/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="../static/assets/favicon-16x16.png" />
+    <link rel="icon" type="image/x-icon" href="../static/favicon_io/favicon.ico" />
+    <link rel="stylesheet" href="../static/style.css" />
+</head>
+
+<body>
+    <!-- Navbar -->
+    {% include "navbar.html" %}
+
+    <main>
+        <!-- Progress Line Below Navbar -->
+        <div class="progress-line-container">
+            <div class="progress-line" id="progressLine"></div>
+        </div>
+
+        <div class="container">
+            <h1>Asset Downloader</h1>
+            <form id="downloadForm">
+                <input type="text" name="url" id="urlInput" placeholder="Enter image or video URL" required />
+                <button type="submit" id="downloadButton">
+                    Download
+                </button>
+            </form>
+
+            <div class="preview-container" id="previewContainer">
+                <!-- Preview will be rendered here -->
+            </div>
+
+            <div class="progress-bar-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <!-- Status Message -->
+            <p id="statusMessage"></p>
+
+            <p id="progressText"></p>
+        </div>
+    </main>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

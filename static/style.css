@@ -1,0 +1,143 @@
+body {
+	background-color: #181818;
+	color: #ffffff;
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+.container {
+	max-width: 600px;
+	margin: auto;
+	padding: 20px;
+	text-align: center;
+}
+
+h1 {
+	color: #ff0000;
+	/* YouTube red */
+}
+
+input[type="text"] {
+	width: 100%;
+	padding: 10px;
+	margin: 10px 0;
+	border: none;
+	border-radius: 5px;
+	background-color: #303030;
+	color: #ffffff;
+}
+
+button {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	background-color: #ff0000;
+	/* YouTube red */
+	color: #ffffff;
+	cursor: pointer;
+	transition: background-color 0.3s;
+	/* Add a transition for smoother hover effect */
+}
+
+button:hover {
+	background-color: #cc0000;
+	/* Darker red on hover */
+}
+
+/* Disabled button styles */
+button:disabled {
+	background-color: #606060;
+	/* Gray background when disabled */
+	color: #aaaaaa;
+	/* Light gray text when disabled */
+	cursor: not-allowed;
+	/* Change cursor to indicate disabled state */
+	pointer-events: none;
+	/* Prevent all mouse events when disabled */
+}
+
+/* Navbar styles */
+.navbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: #303030;
+	padding: 20px 8%;
+}
+
+.logo {
+	height: 50px;
+}
+
+.about-link {
+	color: azure;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.about-link:hover {
+	text-decoration: underline;
+}
+
+/* Progress line below navbar */
+.progress-line-container {
+	width: 100%;
+	height: 5px;
+	background-color: #000000;
+	/* Black background */
+}
+
+.progress-line {
+	height: 100%;
+	width: 0;
+	background-color: #ff0000;
+	/* YouTube red progress */
+}
+
+/* Progress bar styles */
+.progress-bar-container {
+	width: 100%;
+	height: 20px;
+	background-color: #303030;
+	border-radius: 5px;
+	margin: 10px 0;
+	display: none;
+}
+
+.progress-bar {
+	width: 0%;
+	height: 100%;
+	background-color: #ff0000;
+	border-radius: 5px;
+}
+
+#statusMessage {
+	margin-top: 10px;
+	font-size: 1.1em;
+}
+
+#progressText {
+	margin-top: 5px;
+}
+
+/* Color for status messages */
+#statusMessage.success {
+	color: #28a745;
+	/* Success green */
+}
+
+#statusMessage.error {
+	color: #dc3545;
+	/* Error red */
+}
+
+@media (max-width: 600px) {
+	.container {
+		padding: 10px;
+	}
+
+	input[type="text"] {
+		font-size: 14px;
+	}
+}
