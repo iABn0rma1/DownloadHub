@@ -1,11 +1,12 @@
 import os
 import requests
 from fastapi import FastAPI, Form, Request
-from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from io import BytesIO
 from PIL import Image
+from pathlib import Path
 
 app = FastAPI()
 
@@ -15,6 +16,26 @@ templates = Jinja2Templates(directory="templates")
 
 # Global variable to track progress
 download_progress = {"progress": 0}
+
+# Get user's Downloads folder path
+downloads_folder = str(Path.home() / "Downloads")
+
+def download_image(url, save_path):
+    """
+    Download an image from a URL and save it to the specified path.
+    """
+    try:
+        response = requests.get(url, timeout=10)  # Set a timeout for the request
+        response.raise_for_status()  # Raise an error for bad status codes
+
+        with open(save_path, 'wb') as file:
+            file.write(response.content)
+
+        print(f"Downloaded: {save_path}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error downloading {url}: {e}")
+    except OSError as e:
+        print(f"Error saving {save_path}: {e}")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -28,55 +49,24 @@ async def download_asset(url: str = Form(...)):
     # Get the file extension
     file_extension = os.path.splitext(url)[-1].lower()
 
-    downloaded = 0  # Initialize downloaded variable
-    total_size = 0  # Initialize total_size variable
+    # Construct the save path in the Downloads folder
+    file_name = f"downloaded_image{file_extension}"
+    save_path = os.path.join(downloads_folder, file_name)
 
     try:
-        response = requests.get(url, stream=True)
-        response.raise_for_status()  # Raise HTTPError for bad responses
-
-        total_size = int(response.headers.get('content-length', 0))
-
         if file_extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
-            img_data = BytesIO()
+            # Call the download_image function to download and save the image
+            download_image(url, save_path)
 
-            for data in response.iter_content(chunk_size=1024):
-                img_data.write(data)
-                downloaded += len(data)
-                download_progress["progress"] = int((downloaded / total_size) * 100)
-
-            img_data.seek(0)  # Reset stream position for reading
-            img = Image.open(img_data)
-            img_path = "temp_image" + file_extension
-            
-            # Create a StreamingResponse to send the image
-            return StreamingResponse(BytesIO(img.tobytes()), media_type="image/jpeg", headers={"Content-Disposition": f"attachment; filename={os.path.basename(img_path)}"})
-
-        elif file_extension in ['.mp4', '.mov', '.avi']:
-            video_path = "temp_video" + file_extension
-            
-            # Create a StreamingResponse to send the video
-            return StreamingResponse(response.iter_content(chunk_size=8192), media_type="video/mp4", headers={"Content-Disposition": f"attachment; filename={os.path.basename(video_path)}"})
+            # Return the image file as a download
+            return FileResponse(save_path, media_type="image/jpeg", filename=file_name)
 
         else:
             return JSONResponse({"error": "Unsupported file type."}, status_code=400)
 
-    except requests.HTTPError as http_err:
-        download_progress["progress"] = 0  # Reset progress on failure
-        return JSONResponse({"error": f"HTTP error occurred: {str(http_err)}"}, status_code=response.status_code)
-    except requests.ConnectionError:
-        download_progress["progress"] = 0  # Reset progress on failure
-        return JSONResponse({"error": "Connection error occurred. Please check your internet connection."}, status_code=500)
-    except requests.Timeout:
-        download_progress["progress"] = 0  # Reset progress on failure
-        return JSONResponse({"error": "Request timed out. Please try again later."}, status_code=500)
     except Exception as e:
         download_progress["progress"] = 0  # Reset progress on failure
         return JSONResponse({"error": f"An unexpected error occurred: {str(e)}"}, status_code=500)
-    finally:
-        # Reset progress if download was completed successfully
-        if downloaded == total_size and total_size > 0:
-            download_progress["progress"] = 100
 
 @app.get("/progress/")
 async def get_progress():
