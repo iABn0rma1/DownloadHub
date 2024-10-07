@@ -29,7 +29,8 @@ input[type="text"] {
 }
 
 button {
-	padding: 10px 10%;
+	padding: 10px 20px;
+	margin: 10% auto;
 	border: none;
 	border-radius: 5px;
 	background-color: #ff0000;
